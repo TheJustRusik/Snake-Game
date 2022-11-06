@@ -11,7 +11,7 @@
 
 const int width = 20;
 const int height = 10;
-const unsigned short timeMS = 100;
+const unsigned short timeMS = 180;
 
 
 namespace key {

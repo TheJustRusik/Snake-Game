@@ -30,6 +30,9 @@ Engine::Engine() {
     field[1][2] = BODY;
     field[1][1] = BODY;
     position = { 3,1 };
+
+    //generate first apple
+    field[height / 2][width / 2] = APPLE;
 }
 
 
@@ -79,14 +82,22 @@ void Engine::play() {
                 if (code == 224) {
                     code = _getch();
                 }
-                if (code == key::LEFT)
+                if (code == key::LEFT and direction != RIGHT) {
                     direction = LEFT;
-                else if (code == key::RIGHT)
+                    Sleep(timeMS);
+                }
+                else if (code == key::RIGHT and direction != LEFT) {
                     direction = RIGHT;
-                else if (code == key::UP)
+                    Sleep(timeMS);
+                }
+                else if (code == key::UP and direction != DOWN) {
                     direction = UP;
-                else if (code == key::DOWN)
+                    Sleep(timeMS);
+                }
+                else if (code == key::DOWN and direction != UP) {
                     direction = DOWN;
+                    Sleep(timeMS);
+                }
             }
         }
     });
@@ -95,8 +106,11 @@ void Engine::play() {
     std::thread thread2([&]() {
         unsigned long long int i = 0;
         short apples = 0;
+        short appleX = width / 2, appleY = height / 2;
+        COORD oldPos = body[body.size() - 1];
         while (true) {
             //debug information
+            /*
             SetConsoleCursorPosition(h, { 25,0 });
             SetConsoleTextAttribute(h, 15);
             std::cout << "Debug information";
@@ -109,6 +123,9 @@ void Engine::play() {
             std::cout << "Position: x: " << position.X << " y: " << position.Y << "             ";
             SetConsoleCursorPosition(h, { 25,4 });
             std::cout << "Eaten apples: " << apples;
+            SetConsoleCursorPosition(h, { 25,5 });
+            std::cout << "Apple pos: x: "<< appleX<<" y: "<<appleY<<"                 ";
+            */
 
             //remove player from old position
             SetConsoleCursorPosition(h, body[body.size() - 1]);
@@ -134,6 +151,7 @@ void Engine::play() {
             for (int i = body.size() - 1; i > 0; i--)
             {
                 body[i] = body[i-1];
+                
             }
             body[0] = position;
 
@@ -145,20 +163,51 @@ void Engine::play() {
                 exit(0);
             }
 
+            //check for colision with body
+            for (int i = 1; i < body.size(); i++) {
+                if (body[0].Y == body[i].Y and body[0].X == body[i].X) {
+                    SetConsoleCursorPosition(h, { 0,height });
+                    SetConsoleTextAttribute(h, 4);
+                    std::cout << "YOU LOST";
+                    exit(0);
+                }
+            }
+
+            
+
             //check for colision with apple
-            if (field[position.X][position.Y] == APPLE) {
+            if (body[0].Y == appleY and body[0].X == appleX) {
+                field[appleY][appleX] = AIR;
                 apples++;
+
+                body.push_back(oldPos);
+
+
+                //generate new apple and draw it
+                LOL:
+                appleX = 1 + ((rand() % width) - 1), appleY = 1 + ((rand() % height) - 1);
+                while (field[appleY][appleX] != AIR) {
+                    for (auto i : body) {
+                        if (appleX == i.X and appleY == i.Y)
+                            goto LOL;
+                    }
+                    appleX = 1 + ((rand() % width) - 1);
+                    appleY = 1 + ((rand() % height) - 1);
+                }
+                SetConsoleCursorPosition(h, { appleX,appleY });
+                SetConsoleTextAttribute(h, 12);
+                std::cout << 'A';
+
             }
 
             //draw player on new position
             SetConsoleCursorPosition(h, body[0]);
             SetConsoleTextAttribute(h, 11);
             std::cout << '*';
-
             
             i++;
             Sleep(timeMS);
-            //MessageBoxA(0, "Next step?", "GO!", 0);
+            
         }
     });
     thread1.join();
