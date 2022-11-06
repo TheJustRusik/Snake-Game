@@ -6,11 +6,12 @@
 #include <windows.h>
 #include <stdlib.h> 
 #include <vector>
+#include <string>
 
 
-const int width = 60;
-const int height = 20;
-const unsigned short timeMS = 150;
+const int width = 20;
+const int height = 10;
+const unsigned short timeMS = 100;
 
 
 namespace key {
@@ -33,30 +34,21 @@ enum Direction {
 enum objects {
     AIR,
     WALL,
+    WALL1,
     BODY,
     APPLE
 };
-enum color {
-    DARKGREEN = 2,
-    YELLOW = 14,
-    RED = 12,
-    BLUE = 9,
-    WHITE = 15,
-    DARKYELLOW = 6,
-    DARKRED = 4
-};
+
 
 class Engine {
 private:
     objects field[height][width];
-    int length = 3;
-    Direction direction = LEFT;
+    Direction direction = RIGHT;
     COORD position;
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     std::vector<COORD> body;
 
-    void showBody(COORD pos);
-    void eraseBody(COORD pos);
+    
 
 public:
     Engine();
