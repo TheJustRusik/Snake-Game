@@ -11,7 +11,7 @@
 
 const int width = 20;
 const int height = 10;
-const unsigned short timeMS = 180;
+const unsigned short timeMS = 200;
 
 
 namespace key {
@@ -48,6 +48,7 @@ private:
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     std::vector<COORD> body;
 
+    bool isInBody(short X, short Y);
     
 
 public:
