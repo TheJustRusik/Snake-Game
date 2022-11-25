@@ -1,14 +1,10 @@
 ﻿#include "Engine.h"
 
-
-int main(){
+int main() {
     srand(time(NULL));
     setlocale(LC_ALL, "");
-    
-    Engine* game = new Engine();
+
+    Engine *game = new Engine();
     game->start();
     game->play();
-    
 }
-
-
