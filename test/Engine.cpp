@@ -72,6 +72,13 @@ void Engine::print() {
     }
 }
 
+bool Engine::isInBody(short X, short Y) {
+    for (auto i : body) 
+        if (i.Y == Y and i.X == X)
+            return true;
+    return false;
+}
+
 void Engine::play() {
     //check keystrokes (independent of everything else)
     std::thread thread1([&]() {
@@ -186,7 +193,7 @@ void Engine::play() {
                 //generate new apple and draw it
                 LOL:
                 appleX = 1 + ((rand() % width) - 1), appleY = 1 + ((rand() % height) - 1);
-                while (field[appleY][appleX] != AIR) {
+                while (field[appleY][appleX] != AIR or isInBody(appleX, appleY)) {
                     for (auto i : body) {
                         if (appleX == i.X and appleY == i.Y)
                             goto LOL;
