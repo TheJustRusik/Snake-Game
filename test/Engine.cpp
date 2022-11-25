@@ -3,6 +3,7 @@
 
 
 Engine::Engine() {
+    
     //hide cursor
     CONSOLE_CURSOR_INFO cursor;
     cursor.bVisible = false;
@@ -33,10 +34,14 @@ Engine::Engine() {
 
     //generate first apple
     field[height / 2][width / 2] = APPLE;
+
+    print();
 }
 
+Engine::~Engine() {
 
-   
+}
+
 //draw game map and first apple (once at the beginning)
 void Engine::print() {
     SetConsoleCursorPosition(h, { 0,0 });
@@ -79,8 +84,76 @@ bool Engine::isInBody(short X, short Y) {
     return false;
 }
 
+void Engine::printLine(std::string str, COORD pos, int color = -1) {
+    SetConsoleCursorPosition(h, pos);
+    if (color == -1) {
+        int j = 2;
+        for (auto i : str) {
+            SetConsoleTextAttribute(h, j);
+            std::cout << i;
+            if (i != ' ')
+                j++;
+            if (j > 15)
+                j = 2;
+        }
+    }
+    else {
+        SetConsoleTextAttribute(h, color);
+        for (auto i : str)
+            std::cout << i;
+    }
+}
+
+void Engine::start() {
+    printLine("SNAKE GAME by TheJustRusik", {23,0});
+    printLine("CHOOSE GAME DIFFICULTY:", {23, 1}, 15);
+    printLine("EASY - 1", { 23, 2 }, 10);
+    printLine("NORMAL - 2", { 23, 3 }, 14);
+    Sleep(100);
+    printLine("HARD - 3", { 23, 4 }, 12);
+RES:
+    Sleep(100);
+    printLine(">> ", { 23, 5 }, 15);
+    Sleep(100);
+    int a;
+    try {
+        std::cin >> a;
+        if (a < 1 or a > 3)
+            throw -1;
+    }
+    catch (...) {
+        printLine("Invalid input (try 1, 2 or 3)", {23, 5}, 4);
+        Sleep(3000);
+        printLine("                             ", { 23, 5 });
+        goto RES;
+    }
+
+    printLine("GAME DIFFICULTY:                  ", { 23, 1 }, 15);
+    switch (a)
+    {
+    case 1:
+        printLine("EASY", { 40, 1 }, 10);
+        timeMS = 300;
+        break;
+    case 2:
+        printLine("NORMAL", { 40, 1 }, 14);
+        timeMS = 200;
+        break;
+    case 3:
+        printLine("HARD", { 40, 1 }, 12);
+        timeMS = 100;
+        break;
+    }
+   
+    printLine("                         ", { 23, 2 }, 10);
+    printLine("                         ", { 23, 3 }, 14);
+    printLine("                         ", { 23, 4 }, 12);
+    printLine("                         ", { 23, 5 }, 15);
+}
+
 void Engine::play() {
     //check keystrokes (independent of everything else)
+    
     std::thread thread1([&]() {
         while (true) {
             if (_kbhit()) {
@@ -166,8 +239,12 @@ void Engine::play() {
             if (position.X == 0 or position.X == (width - 1) or position.Y == 0 or position.Y == (height - 1)) {
                 SetConsoleCursorPosition(h, { 0,height });
                 SetConsoleTextAttribute(h, 4);
-                std::cout << "YOU LOST";
+                
+                
+                
+                system("pause");
                 exit(0);
+                
             }
 
             //check for colision with body
@@ -175,8 +252,12 @@ void Engine::play() {
                 if (body[0].Y == body[i].Y and body[0].X == body[i].X) {
                     SetConsoleCursorPosition(h, { 0,height });
                     SetConsoleTextAttribute(h, 4);
-                    std::cout << "YOU LOST";
+                    
+
+                    
+                    system("pause");
                     exit(0);
+                    
                 }
             }
 
@@ -221,3 +302,31 @@ void Engine::play() {
     thread2.join();
     
 }
+
+void Engine::loose() {
+    printLine("You loose", { 23, 3 }, 12);
+    printLine("Want play agayn? (yes = y/no = n):", { 23, 4 }, 14);
+TB2:
+    printLine("(y/n) >> ", { 23, 5 }, 15);
+    std::string a = "";
+        std::cin >> a;
+        if (a == "y" or a == "1" or a == "yes") {
+            loosed = 1;
+        }
+        else if (a == "n" or a == "0" or a == "no") {
+            loosed = 0;
+        }
+        else{
+            printLine("(y/n) >> ERROR INPUT TRY y OR n !!!", { 23, 5 }, 12);
+            Sleep(3000);
+            printLine("                                   ", { 23,5 });
+            goto TB2;
+        }
+            
+        
+    
+        
+    
+    
+}
+

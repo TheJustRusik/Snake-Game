@@ -11,7 +11,7 @@
 
 const int width = 20;
 const int height = 10;
-const unsigned short timeMS = 200;
+
 
 
 namespace key {
@@ -42,6 +42,10 @@ enum objects {
 
 class Engine {
 private:
+    short unsigned timeMS = 100;
+
+    int loosed = -1;
+
     objects field[height][width];
     Direction direction = RIGHT;
     COORD position;
@@ -49,11 +53,16 @@ private:
     std::vector<COORD> body;
 
     bool isInBody(short X, short Y);
+    void print();
+    void printLine(std::string str, COORD pos, int color);
+    void loose();
+    
+public:
     
 
-public:
     Engine();
-    void print();
+    ~Engine();
+    void start();
     void play();
-    
+
 };
